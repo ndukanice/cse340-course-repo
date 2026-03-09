@@ -1,0 +1,29 @@
+{
+  "name": "cse340-course-repo",
+  "version": "1.0.0",
+  "description": "This repo is for carrying out assignments for the course cse340, back-end development",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ndukanice/cse340-course-repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ndukanice/cse340-course-repo/issues"
+  },
+  "homepage": "https://github.com/ndukanice/cse340-course-repo#readme",
+  "dependencies": {
+    "ejs": "^5.0.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
