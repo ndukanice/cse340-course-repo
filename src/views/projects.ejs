@@ -3,8 +3,6 @@
 <main>
     <h1><%= title %></h1>
 
-    <h2>Upcoming Service Projects</h2>
-
     <% if (projects && projects.length > 0) { %>
         <ul>
             <% projects.forEach((project) => { %>
@@ -18,7 +16,14 @@
                     });
                 %>
                 <li>
-                    <strong><%= formattedDate %>: <%= project.title %> (<%= project.organization_name %>)</strong>
+                    <strong>
+                        <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                    </strong>
+                    <p>
+                        <%= formattedDate %>
+                        | Organization:
+                        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+                    </p>
                     <p><%= project.description %></p>
                     <p><strong>Location:</strong> <%= project.location %></p>
                 </li>

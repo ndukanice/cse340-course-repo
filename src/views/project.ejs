@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+<main>
+    <h1><%= title %></h1>
+
+    <h2><%= projectDetails.title %></h2>
+
+    <p><strong>Description:</strong> <%= projectDetails.description %></p>
+
+    <% const projectDate = new Date(projectDetails.date); %>
+    <p>
+        <strong>Date:</strong>
+        <%= projectDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+    </p>
+
+    <p><strong>Location:</strong> <%= projectDetails.location %></p>
+
+    <p>
+        <strong>Organization:</strong>
+        <a href="/organization/<%= projectDetails.organization_id %>"><%= projectDetails.organization_name %></a>
+    </p>
+</main>
+<%- include('partials/footer') %>
