@@ -19,6 +19,8 @@
         <a href="/organization/<%= projectDetails.organization_id %>"><%= projectDetails.organization_name %></a>
     </p>
 
+    <p><a href="/edit-project/<%= projectDetails.project_id %>">Edit Project</a></p>
+
     <p>
         <strong>Categories:</strong>
         <% if (categories && categories.length > 0) { %>
@@ -29,5 +31,7 @@
             None
         <% } %>
     </p>
+
+    <p><a href="/assign-categories/<%= projectDetails.project_id %>">Edit Categories</a></p>
 </main>
 <%- include('partials/footer') %>
