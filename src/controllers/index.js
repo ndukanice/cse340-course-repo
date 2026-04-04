@@ -4,7 +4,7 @@
 const showHomePage = async (req, res) => {
     const title = 'Home';
 
-    res.render('home', { title });
+    res.render('home', { title, user: req.session.user || null });
 };
 
 // Export any controller functions

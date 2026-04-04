@@ -19,7 +19,9 @@
         <a href="/organization/<%= projectDetails.organization_id %>"><%= projectDetails.organization_name %></a>
     </p>
 
-    <p><a href="/edit-project/<%= projectDetails.project_id %>">Edit Project</a></p>
+    <% if (user && user.role_name === 'admin') { %>
+        <p><a href="/edit-project/<%= projectDetails.project_id %>">Edit Project</a></p>
+    <% } %>
 
     <p>
         <strong>Categories:</strong>
@@ -32,6 +34,8 @@
         <% } %>
     </p>
 
-    <p><a href="/assign-categories/<%= projectDetails.project_id %>">Edit Categories</a></p>
+    <% if (user && user.role_name === 'admin') { %>
+        <p><a href="/assign-categories/<%= projectDetails.project_id %>">Edit Categories</a></p>
+    <% } %>
 </main>
 <%- include('partials/footer') %>

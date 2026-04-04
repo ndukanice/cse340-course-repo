@@ -37,7 +37,7 @@ const showProjectsPage = async (req, res) => {
     const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
     const title = 'Upcoming Service Projects';
 
-    res.render('projects', { title, projects });
+    res.render('projects', { title, projects, user: req.session.user || null });
 };
 
 const showProjectDetailsPage = async (req, res, next) => {
@@ -53,14 +53,14 @@ const showProjectDetailsPage = async (req, res, next) => {
     const categories = await getCategoriesByProjectId(projectId);
     const title = 'Project Details';
 
-    res.render('project', { title, projectDetails, categories });
+    res.render('project', { title, projectDetails, categories, user: req.session.user || null });
 };
 
 const showNewProjectForm = async (req, res) => {
     const organizations = await getAllOrganizations();
     const title = 'Add New Service Project';
 
-    res.render('new-project', { title, organizations });
+    res.render('new-project', { title, organizations, user: req.session.user || null });
 };
 
 const showEditProjectForm = async (req, res, next) => {
@@ -76,7 +76,7 @@ const showEditProjectForm = async (req, res, next) => {
     const organizations = await getAllOrganizations();
     const title = 'Edit Service Project';
 
-    res.render('edit-project', { title, projectDetails, organizations });
+    res.render('edit-project', { title, projectDetails, organizations, user: req.session.user || null });
 };
 
 const processNewProjectForm = async (req, res) => {

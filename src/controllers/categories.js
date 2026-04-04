@@ -23,7 +23,7 @@ const showCategoriesPage = async (req, res) => {
     const categories = await getAllCategories();
     const title = 'Service Categories';
 
-    res.render('categories', { title, categories });
+    res.render('categories', { title, categories, user: req.session.user || null });
 };
 
 const showCategoryDetailsPage = async (req, res, next) => {
@@ -39,13 +39,13 @@ const showCategoryDetailsPage = async (req, res, next) => {
     const projects = await getProjectsByCategoryId(categoryId);
     const title = 'Category Details';
 
-    res.render('category', { title, categoryDetails, projects });
+    res.render('category', { title, categoryDetails, projects, user: req.session.user || null });
 };
 
 const showNewCategoryForm = async (req, res) => {
     const title = 'Add New Category';
 
-    res.render('new-category', { title });
+    res.render('new-category', { title, user: req.session.user || null });
 };
 
 const processNewCategoryForm = async (req, res) => {
@@ -75,7 +75,7 @@ const showEditCategoryForm = async (req, res, next) => {
     }
 
     const title = 'Edit Category';
-    res.render('edit-category', { title, categoryDetails });
+    res.render('edit-category', { title, categoryDetails, user: req.session.user || null });
 };
 
 const processEditCategoryForm = async (req, res) => {
@@ -115,7 +115,8 @@ const showAssignCategoriesForm = async (req, res, next) => {
         projectId,
         projectDetails,
         categories,
-        assignedCategories
+        assignedCategories,
+        user: req.session.user || null
     });
 };
 

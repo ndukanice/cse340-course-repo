@@ -13,7 +13,7 @@ const showOrganizationsPage = async (req, res) => {
     const organizations = await getAllOrganizations();
     const title = 'Our Partner Organizations';
 
-    res.render('organizations', { title, organizations });
+    res.render('organizations', { title, organizations, user: req.session.user || null });
 };
 
 const showOrganizationDetailsPage = async (req, res, next) => {
@@ -29,7 +29,7 @@ const showOrganizationDetailsPage = async (req, res, next) => {
     const projects = await getProjectsByOrganizationId(organizationId);
     const title = 'Organization Details';
 
-    res.render('organization', { title, organizationDetails, projects });
+    res.render('organization', { title, organizationDetails, projects, user: req.session.user || null });
 };
 
 // Define validation and sanitization rules for organization form
@@ -57,7 +57,7 @@ const organizationValidation = [
 const showNewOrganizationForm = async (req, res) => {
     const title = 'Add New Organization';
 
-    res.render('new-organization', { title });
+    res.render('new-organization', { title, user: req.session.user || null });
 };
 
 const showEditOrganizationForm = async (req, res, next) => {
@@ -71,7 +71,7 @@ const showEditOrganizationForm = async (req, res, next) => {
     }
 
     const title = 'Edit Organization';
-    res.render('edit-organization', { title, organizationDetails });
+    res.render('edit-organization', { title, organizationDetails, user: req.session.user || null });
 };
 
 const processNewOrganizationForm = async (req, res) => {

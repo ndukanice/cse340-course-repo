@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
-import { authenticateUser, createUser } from '../models/users.js';
+import { authenticateUser, createUser, getAllUsers } from '../models/users.js';
 
 const userRegistrationValidation = [
     body('name')
@@ -44,12 +44,36 @@ const requireLogin = (req, res, next) => {
     return next();
 };
 
+const requireRole = (role) => {
+    return (req, res, next) => {
+        if (!req.session || !req.session.user) {
+            req.flash('error', 'You must be logged in to access this page.');
+            return res.redirect('/login');
+        }
+
+        if (req.session.user.role_name !== role) {
+            req.flash('error', 'You do not have permission to access this page.');
+            return res.redirect('/dashboard');
+        }
+
+        return next();
+    };
+};
+
 const showDashboard = (req, res) => {
     const { name, email } = req.session.user;
     res.render('dashboard', {
         title: 'Dashboard',
         name,
         email
+    });
+};
+
+const showUsersPage = async (req, res) => {
+    const users = await getAllUsers();
+    res.render('users', {
+        title: 'Registered Users',
+        users
     });
 };
 
@@ -121,5 +145,7 @@ export {
     processLoginForm,
     processLogout,
     requireLogin,
-    showDashboard
+    requireRole,
+    showDashboard,
+    showUsersPage
 };
