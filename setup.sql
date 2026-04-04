@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS public.users;
+DROP TABLE IF EXISTS public.roles;
 DROP TABLE IF EXISTS public.project_category;
 DROP TABLE IF EXISTS public.category;
 DROP TABLE IF EXISTS public.project;
@@ -26,6 +28,24 @@ CREATE TABLE public.project (
 CREATE TABLE public.category (
     category_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE public.roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+CREATE TABLE public.users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_users_roles
+        FOREIGN KEY (role_id)
+        REFERENCES public.roles (role_id)
 );
 
 CREATE TABLE public.project_category (
@@ -71,6 +91,10 @@ INSERT INTO public.category (category_id, name) VALUES
     (4, 'Food Security'),
     (5, 'Infrastructure');
 
+INSERT INTO public.roles (role_id, role_name, role_description) VALUES
+    (1, 'user', 'Standard user with basic access'),
+    (2, 'admin', 'Administrator with full system access');
+
 INSERT INTO public.project_category (project_id, category_id) VALUES
     (1, 1), (1, 5),
     (2, 2), (2, 5),
@@ -91,3 +115,16 @@ INSERT INTO public.project_category (project_id, category_id) VALUES
 SELECT setval(pg_get_serial_sequence('public.organization', 'organization_id'), (SELECT MAX(organization_id) FROM public.organization));
 SELECT setval(pg_get_serial_sequence('public.project', 'project_id'), (SELECT MAX(project_id) FROM public.project));
 SELECT setval(pg_get_serial_sequence('public.category', 'category_id'), (SELECT MAX(category_id) FROM public.category));
+SELECT setval(pg_get_serial_sequence('public.roles', 'role_id'), (SELECT MAX(role_id) FROM public.roles));
+
+-- Verification SQL for roles/users relationship (run manually when needed):
+-- SELECT * FROM public.roles;
+--
+-- INSERT INTO public.users (name, email, password_hash, role_id)
+-- VALUES ('testuser', 'test@example.com', 'placeholder_hash', 1);
+--
+-- SELECT u.user_id, u.name, u.email, r.role_name, r.role_description
+-- FROM public.users u
+-- JOIN public.roles r ON u.role_id = r.role_id;
+--
+-- DELETE FROM public.users WHERE email = 'test@example.com';
