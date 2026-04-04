@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
-import { createUser } from '../models/users.js';
+import { authenticateUser, createUser } from '../models/users.js';
 
 const userRegistrationValidation = [
     body('name')
@@ -25,6 +25,32 @@ const userRegistrationValidation = [
 
 const showUserRegistrationForm = (req, res) => {
     res.render('register', { title: 'Register' });
+};
+
+const showLoginForm = (req, res) => {
+    if (req.query.loggedOut === 'true') {
+        req.flash('success', 'You have logged out successfully.');
+    }
+
+    res.render('login', { title: 'Login' });
+};
+
+const requireLogin = (req, res, next) => {
+    if (!req.session || !req.session.user) {
+        req.flash('error', 'You must be logged in to access that page.');
+        return res.redirect('/login');
+    }
+
+    return next();
+};
+
+const showDashboard = (req, res) => {
+    const { name, email } = req.session.user;
+    res.render('dashboard', {
+        title: 'Dashboard',
+        name,
+        email
+    });
 };
 
 const processUserRegistrationForm = async (req, res) => {
@@ -52,8 +78,48 @@ const processUserRegistrationForm = async (req, res) => {
     }
 };
 
+const processLoginForm = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await authenticateUser(email, password);
+
+        if (!user) {
+            req.flash('error', 'Login failed. Please check your email and password.');
+            return res.redirect('/login');
+        }
+
+        req.session.user = user;
+        req.flash('success', 'Login successful!');
+        console.log('Authenticated user:', user);
+        return res.redirect('/dashboard');
+    } catch (error) {
+        console.error('Error logging in user:', error);
+        req.flash('error', 'An error occurred during login. Please try again.');
+        return res.redirect('/login');
+    }
+};
+
+const processLogout = (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error('Error logging out user:', error);
+            req.flash('error', 'Unable to log out. Please try again.');
+            return res.redirect('/');
+        }
+
+        res.clearCookie('connect.sid');
+        return res.redirect('/login?loggedOut=true');
+    });
+};
+
 export {
     showUserRegistrationForm,
     processUserRegistrationForm,
-    userRegistrationValidation
+    userRegistrationValidation,
+    showLoginForm,
+    processLoginForm,
+    processLogout,
+    requireLogin,
+    showDashboard
 };

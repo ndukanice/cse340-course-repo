@@ -31,7 +31,12 @@ import {
 	showCategoryDetailsPage
 } from './categories.js';
 import {
+	processLoginForm,
+	processLogout,
 	processUserRegistrationForm,
+	requireLogin,
+	showDashboard,
+	showLoginForm,
 	showUserRegistrationForm,
 	userRegistrationValidation
 } from './users.js';
@@ -64,6 +69,10 @@ router.get('/edit-organization/:id', showEditOrganizationForm);
 router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
 router.get('/register', showUserRegistrationForm);
 router.post('/register', userRegistrationValidation, processUserRegistrationForm);
+router.get('/login', showLoginForm);
+router.post('/login', processLoginForm);
+router.get('/logout', processLogout);
+router.get('/dashboard', requireLogin, showDashboard);
 
 // error-handling routes
 router.get('/test-error', testErrorPage);
