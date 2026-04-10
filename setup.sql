@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS public.project_volunteer;
 DROP TABLE IF EXISTS public.users;
 DROP TABLE IF EXISTS public.roles;
 DROP TABLE IF EXISTS public.project_category;
@@ -59,6 +60,21 @@ CREATE TABLE public.project_category (
     CONSTRAINT fk_project_category_category
         FOREIGN KEY (category_id)
         REFERENCES public.category (category_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE public.project_volunteer (
+    project_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    volunteered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (project_id, user_id),
+    CONSTRAINT fk_project_volunteer_project
+        FOREIGN KEY (project_id)
+        REFERENCES public.project (project_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_project_volunteer_user
+        FOREIGN KEY (user_id)
+        REFERENCES public.users (user_id)
         ON DELETE CASCADE
 );
 

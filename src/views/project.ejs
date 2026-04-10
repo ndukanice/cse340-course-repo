@@ -23,6 +23,15 @@
         <p><a href="/edit-project/<%= projectDetails.project_id %>">Edit Project</a></p>
     <% } %>
 
+    <% if (user) { %>
+        <% if (isVolunteering) { %>
+            <p><strong>You are volunteering for this project.</strong></p>
+            <p><a href="/project/<%= projectDetails.project_id %>/remove-volunteer">Remove yourself as volunteer</a></p>
+        <% } else { %>
+            <p><a href="/project/<%= projectDetails.project_id %>/volunteer">Volunteer for this project</a></p>
+        <% } %>
+    <% } %>
+
     <p>
         <strong>Categories:</strong>
         <% if (categories && categories.length > 0) { %>

@@ -3,6 +3,30 @@
     <h1>Dashboard</h1>
     <p>Welcome, <%= name %>! Your email is <%= email %>.</p>
 
+    <h2>Your Volunteer Projects</h2>
+    <% if (volunteeredProjects && volunteeredProjects.length > 0) { %>
+        <ul>
+            <% volunteeredProjects.forEach((project) => { %>
+                <% const projectDate = new Date(project.date); %>
+                <li>
+                    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                    -
+                    <%= projectDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }) %>
+                    - <%= project.location %>
+                    - <%= project.organization_name %>
+                    - <a href="/project/<%= project.project_id %>/remove-volunteer">Remove</a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>You are not volunteering for any projects yet.</p>
+    <% } %>
+
     <% if (user && user.role_name === 'admin') { %>
         <p><a href="/users">View All Users</a></p>
     <% } %>

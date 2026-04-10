@@ -1,5 +1,33 @@
 import db from './db.js';
 
+let volunteerTableEnsured = false;
+
+const ensureVolunteerTableExists = async () => {
+    if (volunteerTableEnsured) {
+        return;
+    }
+
+    const query = `
+        CREATE TABLE IF NOT EXISTS public.project_volunteer (
+            project_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            volunteered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (project_id, user_id),
+            CONSTRAINT fk_project_volunteer_project
+                FOREIGN KEY (project_id)
+                REFERENCES public.project (project_id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_project_volunteer_user
+                FOREIGN KEY (user_id)
+                REFERENCES public.users (user_id)
+                ON DELETE CASCADE
+        );
+    `;
+
+    await db.query(query);
+    volunteerTableEnsured = true;
+};
+
 const getAllProjects = async () => {
     const query = `
         SELECT 
@@ -126,6 +154,71 @@ const updateProject = async (projectId, title, description, location, date, orga
     return result.rows[0].project_id;
 };
 
+const addVolunteerToProject = async (projectId, userId) => {
+    await ensureVolunteerTableExists();
+
+    const query = `
+        INSERT INTO public.project_volunteer (project_id, user_id)
+        VALUES ($1, $2)
+        ON CONFLICT (project_id, user_id) DO NOTHING;
+    `;
+
+    const query_params = [projectId, userId];
+    await db.query(query, query_params);
+};
+
+const removeVolunteerFromProject = async (projectId, userId) => {
+    await ensureVolunteerTableExists();
+
+    const query = `
+        DELETE FROM public.project_volunteer
+        WHERE project_id = $1
+        AND user_id = $2;
+    `;
+
+    const query_params = [projectId, userId];
+    await db.query(query, query_params);
+};
+
+const isUserVolunteeringForProject = async (projectId, userId) => {
+    await ensureVolunteerTableExists();
+
+    const query = `
+        SELECT 1
+        FROM public.project_volunteer
+        WHERE project_id = $1
+        AND user_id = $2;
+    `;
+
+    const query_params = [projectId, userId];
+    const result = await db.query(query, query_params);
+
+    return result.rows.length > 0;
+};
+
+const getVolunteeredProjectsByUserId = async (userId) => {
+    await ensureVolunteerTableExists();
+
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.date,
+            p.location,
+            o.name AS organization_name
+        FROM public.project_volunteer pv
+        JOIN public.project p ON pv.project_id = p.project_id
+        JOIN public.organization o ON p.organization_id = o.organization_id
+        WHERE pv.user_id = $1
+        ORDER BY p.date ASC, p.title ASC;
+    `;
+
+    const query_params = [userId];
+    const result = await db.query(query, query_params);
+
+    return result.rows;
+};
+
 // Export the model functions
 export {
     getAllProjects,
@@ -133,5 +226,9 @@ export {
     getProjectDetails,
     getProjectsByOrganizationId,
     createProject,
-    updateProject
+    updateProject,
+    addVolunteerToProject,
+    removeVolunteerFromProject,
+    isUserVolunteeringForProject,
+    getVolunteeredProjectsByUserId
 };
